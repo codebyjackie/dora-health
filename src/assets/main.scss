@@ -1,6 +1,15 @@
+@font-face {
+  font-family: 'Varela Round';
+  src: url('./VarelaRound-Regular.ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   margin: 0;
   background-color: #f5f5f5;
+  font-family: 'Varela Round', sans-serif !important;
+  box-sizing: border-box !important;
 }
 
 /* fade-slide */

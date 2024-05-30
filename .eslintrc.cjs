@@ -32,8 +32,6 @@ module.exports = {
     'no-undef': 'error'
   },
   globals: {
-    ElMessage: 'readonly',
-    ElMessageBox: 'readonly',
-    ElLoading: 'readonly'
+    showNotify: 'readonly'
   }
 }

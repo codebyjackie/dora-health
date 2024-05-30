@@ -1,7 +1,8 @@
 <script setup></script>
 
 <template>
+  <div>profile</div>
   <RouterView />
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped></style>
