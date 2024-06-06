@@ -1,6 +1,8 @@
 <script setup>
-import { ref } from 'vue'
-import { userLoginService, userRegisterService } from '@/api/user'
+import { ref, nextTick } from 'vue'
+import { userLoginService, userRegisterService } from '@/api/auth'
+import { useAuthStore } from '@/stores'
+import { useRouter } from 'vue-router'
 
 const loginForm = ref({
   email: '',
@@ -22,11 +24,11 @@ const validator = {
   },
   password: (val) => {
     if (val === '') return 'Password is required.'
-    if (val.length < 8) return 'Password must be at least 6 characters long.'
+    if (val.length < 6) return 'Password must be at least 6 characters long.'
     if (!/[a-zA-Z]/.test(val))
       return 'Password must contain at least one letter.'
     if (!/[0-9]/.test(val)) return 'Password must contain at least one number.'
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(val))
+    if (!/[!@#$%^&*()\-_=+\[\]{}|;:'",.<>?/]/.test(val))
       return 'Password must contain at least one special character.'
     return true
   },
@@ -37,31 +39,54 @@ const validator = {
   }
 }
 
+const authStore = useAuthStore()
+const router = useRouter()
 const handleLogin = async () => {
-  console.log('登录', {
-    email: loginForm.value.email,
-    password: loginForm.value.password
-  })
-  await userLoginService(loginForm.value)
-  // router.push('/');
+  console.log('登录', loginForm.value)
+  const res = await userLoginService(loginForm.value)
+  authStore.setToken(res.data.token)
   showNotify({ type: 'success', message: 'Login success' })
+  router.push('/')
 }
 
+const active = ref(null)
+const passwordField = ref(null)
 const handleRegister = async () => {
-  console.log('注册', {
-    email: loginForm.value.email,
-    password: loginForm.value.password
+  console.log('注册', registerForm.value)
+  const res = await userRegisterService(registerForm.value)
+  loginForm.value.email = res.data.email
+  active.value = 'login'
+  showNotify({
+    type: 'success',
+    message: res.message
   })
-  await userRegisterService(registerForm.value)
-  showNotify({ type: 'success', message: 'Register success' })
+
+  registerForm.value.email = ''
+  registerForm.value.password = ''
+  registerForm.value.repassword = ''
+
+  nextTick(() => {
+    if (passwordField.value) {
+      passwordField.value.focus()
+    }
+  })
 }
 
 const header = ref('Welcome back!')
+const registerFormRef = ref(null)
+const loginFormRef = ref(null)
+
 const onClickTab = ({ title }) => {
   if (title === 'Sign In') {
     header.value = 'Welcome back!'
+    if (loginFormRef.value) {
+      loginFormRef.value?.resetValidation()
+    }
   } else {
     header.value = 'Hello there!'
+    if (registerFormRef.value) {
+      registerFormRef.value.resetValidation()
+    }
   }
 }
 </script>
@@ -79,8 +104,8 @@ const onClickTab = ({ title }) => {
       animated
       swipeable
     >
-      <van-tab title="Sign In">
-        <van-form @submit="handleLogin">
+      <van-tab title="Sign In" name="login">
+        <van-form ref="loginFormRef" @submit="handleLogin">
           <van-cell-group inset>
             <van-field
               v-model.trim="loginForm.email"
@@ -92,6 +117,7 @@ const onClickTab = ({ title }) => {
               clearable
             />
             <van-field
+              ref="passwordField"
               v-model="loginForm.password"
               type="password"
               name="password"
@@ -111,8 +137,8 @@ const onClickTab = ({ title }) => {
           <div class="reset-password">Forgot Password?</div>
         </van-form>
       </van-tab>
-      <van-tab title="Sign Up">
-        <van-form @submit="handleRegister">
+      <van-tab title="Sign Up" name="register">
+        <van-form ref="registerFormRef" @submit="handleRegister">
           <van-cell-group inset>
             <van-field
               v-model="registerForm.email"
@@ -169,9 +195,9 @@ const onClickTab = ({ title }) => {
   position: relative;
   .header {
     position: absolute;
-    top: -313.75px;
+    top: -325.75px;
     width: 375px;
-    height: 187.5px;
+    height: 387.5px !important;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
@@ -183,6 +209,7 @@ const onClickTab = ({ title }) => {
     img {
       width: 187.5px;
       height: 131.25px;
+      margin-top: 10px;
       object-fit: cover;
     }
     h2 {

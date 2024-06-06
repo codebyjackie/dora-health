@@ -1,9 +1,9 @@
 import axios from 'axios'
 import router from '@/router'
-import { useUserStore } from '@/stores'
+import { useAuthStore } from '@/stores'
 import { showNotify } from 'vant'
 
-const baseURL = 'http://big-event-vue-api-t.itheima.net'
+const baseURL = 'http://192.168.36.46:3000'
 
 const instance = axios.create({
   baseURL,
@@ -14,9 +14,9 @@ const instance = axios.create({
 // Request interceptor: Checks if there's a token in the user store, and if so, adds it to the request header
 instance.interceptors.request.use(
   (config) => {
-    const userStore = useUserStore()
-    if (userStore.token) {
-      config.headers.Authorization = userStore.token
+    const authStore = useAuthStore()
+    if (authStore.token) {
+      config.headers.Authorization = 'Bearer ' + authStore.token
     }
     return config
   },

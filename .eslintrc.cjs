@@ -29,7 +29,8 @@ module.exports = {
       }
     ],
     'vue/no-setup-props-destructure': ['off'],
-    'no-undef': 'error'
+    'no-undef': 'error',
+    'no-useless-escape': 'off'
   },
   globals: {
     showNotify: 'readonly'
