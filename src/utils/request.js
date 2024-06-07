@@ -7,7 +7,8 @@ const baseURL = 'http://192.168.36.46:3000'
 
 const instance = axios.create({
   baseURL,
-  timeout: 10000
+  timeout: 10000,
+  withCredentials: true
 })
 
 // Instance interceptors for request and response
