@@ -40,10 +40,12 @@ instance.interceptors.response.use(
       router.push('/login')
     }
     // Show a notification with an error message, and return a rejected promise
-    showNotify({
-      type: 'danger',
-      message: err.response.data.message || 'Service Error'
-    })
+    if (err.response.data.message !== 'Refresh token is required') {
+      showNotify({
+        type: 'danger',
+        message: err.response.data.message || 'Service Error'
+      })
+    }
     return Promise.reject(err)
   }
 )

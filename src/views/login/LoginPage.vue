@@ -45,14 +45,12 @@ const handleLogin = async () => {
   console.log('登录', loginForm.value)
   const res = await userLoginService(loginForm.value)
   authStore.setToken(res.data.token)
-  showNotify({ type: 'success', message: 'Login success' })
   router.push('/')
 }
 
 const active = ref(null)
 const passwordField = ref(null)
 const handleRegister = async () => {
-  console.log('注册', registerForm.value)
   const res = await userRegisterService(registerForm.value)
   loginForm.value.email = res.data.email
   active.value = 'login'

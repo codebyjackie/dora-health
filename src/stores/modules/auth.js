@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { refreshTokenService } from '@/api/auth' // 引入你的刷新 token 服务
+import { refreshTokenService } from '@/api/auth'
 
 export const useAuthStore = defineStore(
   'auth',
